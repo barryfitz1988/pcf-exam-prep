@@ -1,0 +1,8 @@
+org/cloudfoundry/example/RouteServiceApplication$TrustEverythingTrustManager.class
+org/cloudfoundry/example/Controller.class
+org/cloudfoundry/example/RouteServiceApplication$TrustEverythingHostNameVerifier.class
+org/cloudfoundry/example/RouteServiceApplication$TrustEverythingClientHttpRequestFactory.class
+org/cloudfoundry/example/RouteServiceApplication$1.class
+org/cloudfoundry/example/RouteServiceApplication$NoErrorsResponseErrorHandler.class
+org/cloudfoundry/example/RouteServiceApplication.class
+org/cloudfoundry/example/RateLimiter.class

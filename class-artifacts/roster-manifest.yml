@@ -1,0 +1,16 @@
+applications:
+ - name: roster-green
+   instances: 1
+   memory: 750M
+   buildpack: java_buildpack
+   random-route: true
+   path: ./rest-data-service.jar
+   services:
+           - mysql-service
+           - roster-log-drain  
+   env:
+           ROSTER_A: barry
+           ROSTER_B: jennifer
+           ROSTER_C: drax
+           APP_VERSION: green
+

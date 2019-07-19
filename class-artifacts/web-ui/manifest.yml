@@ -1,0 +1,10 @@
+---
+applications:
+- name: web-ui
+  random-route: true
+  buildpacks:
+    - https://github.com/cloudfoundry/ruby-buildpack.git#v1.6.35
+      #- https://github.com/cloudfoundry/staticfile-buildpack  
+  memory: 128M
+  instances: 1
+  stack: cflinuxfs2
