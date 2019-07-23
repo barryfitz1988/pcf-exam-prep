@@ -1,0 +1,363 @@
+NAME:
+   cf.exe - A command line tool to interact with Cloud Foundry
+
+USAGE:
+   cf.exe [global options] command [arguments...] [command options]
+
+VERSION:
+   6.43.0+815ea2f3d.2019-02-20
+
+GETTING STARTED:
+   help                                   Show help
+   version                                Print the version
+   login                                  Log user in
+   logout                                 Log user out
+   passwd                                 Change user password
+   target                                 Set or view the targeted org or space
+
+   api                                    Set or view target api url
+   auth                                   Authenticate non-interactively
+
+APPS:
+   apps                                   List all apps in the target space
+   app                                    Display health and status for an app
+
+   push                                   Push a new app or sync changes to an existing app
+   scale                                  Change or view the instance count, disk space limit, and memory limit for an app
+   delete                                 Delete an app
+   rename                                 Rename an app
+
+   start                                  Start an app
+   stop                                   Stop an app
+   restart                                Stop all instances of the app, then start them again. This causes downtime.
+   restage                                Recreate the app's executable artifact using the latest pushed app files and the latest environment (variables, service bindings, buildpack, stack, etc.). This action will cause app downtime.
+   restart-app-instance                   Terminate, then restart an app instance
+
+   run-task                               Run a one-off task on an app
+   tasks                                  List tasks of an app
+   terminate-task                         Terminate a running task of an app
+
+   events                                 Show recent app events
+   files                                  Print out a list of files in a directory or the contents of a specific file of an app running on the DEA backend
+   logs                                   Tail or show recent logs for an app
+
+   env                                    Show all env variables for an app
+   set-env                                Set an env variable for an app
+   unset-env                              Remove an env variable from an app
+
+   stacks                                 List all stacks (a stack is a pre-built file system, including an operating system, that can run apps)
+   stack                                  Show information for a stack (a stack is a pre-built file system, including an operating system, that can run apps)
+
+   copy-source                            Copies the source code of an application to another existing application (and restarts that application)
+   create-app-manifest                    Create an app manifest for an app that has been pushed successfully
+
+   get-health-check                       Show the type of health check performed on an app
+   set-health-check                       Change type of health check performed on an app
+   enable-ssh                             Enable ssh for the application
+   disable-ssh                            Disable ssh for the application
+   ssh-enabled                            Reports whether SSH is enabled on an application container instance
+   ssh                                    SSH to an application container instance
+
+SERVICES:
+   marketplace                            List available offerings in the marketplace
+   services                               List all service instances in the target space
+   service                                Show service instance info
+
+   create-service                         Create a service instance
+   update-service                         Update a service instance
+   delete-service                         Delete a service instance
+   rename-service                         Rename a service instance
+
+   create-service-key                     Create key for a service instance
+   service-keys                           List keys for a service instance
+   service-key                            Show service key info
+   delete-service-key                     Delete a service key
+
+   bind-service                           Bind a service instance to an app
+   unbind-service                         Unbind a service instance from an app
+
+   bind-route-service                     Bind a service instance to an HTTP route
+   unbind-route-service                   Unbind a service instance from an HTTP route
+
+   create-user-provided-service           Make a user-provided service instance available to CF apps
+   update-user-provided-service           Update user-provided service instance
+
+   share-service                          Share a service instance with another space
+   unshare-service                        Unshare a shared service instance from a space
+
+ORGS:
+   orgs                                   List all orgs
+   org                                    Show org info
+
+   create-org                             Create an org
+   delete-org                             Delete an org
+   rename-org                             Rename an org
+
+SPACES:
+   spaces                                 List all spaces in an org
+   space                                  Show space info
+
+   create-space                           Create a space
+   delete-space                           Delete a space
+   rename-space                           Rename a space
+
+   allow-space-ssh                        Allow SSH access for the space
+   disallow-space-ssh                     Disallow SSH access for the space
+   space-ssh-allowed                      Reports whether SSH is allowed in a space
+
+DOMAINS:
+   domains                                List domains in the target org
+   create-domain                          Create a domain in an org for later use
+   delete-domain                          Delete a domain
+   create-shared-domain                   Create a domain that can be used by all orgs (admin-only)
+   delete-shared-domain                   Delete a shared domain
+
+   router-groups                          List router groups
+
+ROUTES:
+   routes                                 List all routes in the current space or the current organization
+   create-route                           Create a url route in a space for later use
+   check-route                            Perform a simple check to determine whether a route currently exists or not
+   map-route                              Add a url route to an app
+   unmap-route                            Remove a url route from an app
+   delete-route                           Delete a route
+   delete-orphaned-routes                 Delete all orphaned routes (i.e. those that are not mapped to an app)
+
+NETWORK POLICIES:
+   network-policies                       List direct network traffic policies
+   add-network-policy                     Create policy to allow direct network traffic from one app to another
+   remove-network-policy                  Remove network traffic policy of an app
+
+BUILDPACKS:
+   buildpacks                             List all buildpacks
+   create-buildpack                       Create a buildpack
+   update-buildpack                       Update a buildpack
+   rename-buildpack                       Rename a buildpack
+   delete-buildpack                       Delete a buildpack
+
+USER ADMIN:
+   create-user                            Create a new user
+   delete-user                            Delete a user
+
+   org-users                              Show org users by role
+   set-org-role                           Assign an org role to a user
+   unset-org-role                         Remove an org role from a user
+
+   space-users                            Show space users by role
+   set-space-role                         Assign a space role to a user
+   unset-space-role                       Remove a space role from a user
+
+ORG ADMIN:
+   quotas                                 List available usage quotas
+   quota                                  Show quota info
+   set-quota                              Assign a quota to an org
+
+   create-quota                           Define a new resource quota
+   delete-quota                           Delete a quota
+   update-quota                           Update an existing resource quota
+
+   share-private-domain                   Share a private domain with an org
+   unshare-private-domain                 Unshare a private domain with an org
+
+SPACE ADMIN:
+   space-quotas                           List available space resource quotas
+   space-quota                            Show space quota info
+
+   create-space-quota                     Define a new space resource quota
+   update-space-quota                     Update an existing space quota
+   delete-space-quota                     Delete a space quota definition and unassign the space quota from all spaces
+
+   set-space-quota                        Assign a space quota definition to a space
+   unset-space-quota                      Unassign a quota from a space
+
+SERVICE ADMIN:
+   service-auth-tokens                    List service auth tokens
+   create-service-auth-token              Create a service auth token
+   update-service-auth-token              Update a service auth token
+   delete-service-auth-token              Delete a service auth token
+
+   service-brokers                        List service brokers
+   create-service-broker                  Create a service broker
+   update-service-broker                  Update a service broker
+   delete-service-broker                  Delete a service broker
+   rename-service-broker                  Rename a service broker
+
+   migrate-service-instances              Migrate service instances from one service plan to another
+   purge-service-offering                 Recursively remove a service and child objects from Cloud Foundry database without making requests to a service broker
+   purge-service-instance                 Recursively remove a service instance and child objects from Cloud Foundry database without making requests to a service broker
+
+   service-access                         List service access settings
+   enable-service-access                  Enable access to a service or service plan for one or all orgs
+   disable-service-access                 Disable access to a service or service plan for one or all orgs
+
+SECURITY GROUP:
+   security-group                         Show a single security group
+   security-groups                        List all security groups
+   create-security-group                  Create a security group
+   update-security-group                  Update a security group
+   delete-security-group                  Deletes a security group
+   bind-security-group                    Bind a security group to a particular space, or all existing spaces of an org
+   unbind-security-group                  Unbind a security group from a space
+
+   bind-staging-security-group            Bind a security group to the list of security groups to be used for staging applications
+   staging-security-groups                List security groups in the staging set for applications
+   unbind-staging-security-group          Unbind a security group from the set of security groups for staging applications
+
+   bind-running-security-group            Bind a security group to the list of security groups to be used for running applications
+   running-security-groups                List security groups in the set of security groups for running applications
+   unbind-running-security-group          Unbind a security group from the set of security groups for running applications
+
+ENVIRONMENT VARIABLE GROUPS:
+   running-environment-variable-group     Retrieve the contents of the running environment variable group
+   staging-environment-variable-group     Retrieve the contents of the staging environment variable group
+   set-staging-environment-variable-group Pass parameters as JSON to create a staging environment variable group
+   set-running-environment-variable-group Pass parameters as JSON to create a running environment variable group
+
+ISOLATION SEGMENTS:
+   isolation-segments                     List all isolation segments
+   create-isolation-segment               Create an isolation segment
+   delete-isolation-segment               Delete an isolation segment
+   enable-org-isolation                   Entitle an organization to an isolation segment
+   disable-org-isolation                  Revoke an organization's entitlement to an isolation segment
+   set-org-default-isolation-segment      Set the default isolation segment used for apps in spaces in an org
+   reset-org-default-isolation-segment    Reset the default isolation segment used for apps in spaces of an org
+   set-space-isolation-segment            Assign the isolation segment for a space
+   reset-space-isolation-segment          Reset the space's isolation segment to the org default
+
+FEATURE FLAGS:
+   feature-flags                          Retrieve list of feature flags with status
+   feature-flag                           Retrieve an individual feature flag with status
+   enable-feature-flag                    Allow use of a feature
+   disable-feature-flag                   Prevent use of a feature
+
+ADVANCED:
+   curl                                   Executes a request to the targeted API endpoint
+   config                                 Write default values to the config
+   oauth-token                            Retrieve and display the OAuth token for the current session
+   ssh-code                               Get a one time password for ssh clients
+
+ADD/REMOVE PLUGIN REPOSITORY:
+   add-plugin-repo                        Add a new plugin repository
+   remove-plugin-repo                     Remove a plugin repository
+   list-plugin-repos                      List all the added plugin repositories
+   repo-plugins                           List all available plugins in specified repository or in all added repositories
+
+ADD/REMOVE PLUGIN:
+   plugins                                List commands of installed plugins
+   install-plugin                         Install CLI plugin
+   uninstall-plugin                       Uninstall CLI plugin
+
+INSTALLED PLUGIN COMMANDS:
+   download                               Download contents of a running app's file directory
+   sync                                   Synchronize a folder to a container directory.
+
+ENVIRONMENT VARIABLES:
+   CF_COLOR=false                     Do not colorize output
+   CF_DIAL_TIMEOUT=5                  Max wait time to establish a connection, including name resolution, in seconds
+   CF_HOME=path/to/dir/               Override path to default config directory
+   CF_PLUGIN_HOME=path/to/dir/        Override path to default plugin config directory
+   CF_TRACE=true                      Print API request diagnostics to stdout
+   CF_TRACE=path/to/trace.log         Append API request diagnostics to a log file
+   all_proxy=proxy.example.com:8080   Specify a proxy server to enable proxying for all requests
+   https_proxy=proxy.example.com:8080 Enable proxying for HTTP requests
+
+GLOBAL OPTIONS:
+   --help, -h                         Show help
+   -v                                 Print API request diagnostics to stdout
+
+APPS (experimental):
+   v3-apps                            List all apps in the target space
+   v3-create-app                      Create a V3 App
+
+   v3-push                            Push a new app or sync changes to an existing app
+   v3-scale                           Change or view the instance count, disk space limit, and memory limit for an app
+   v3-delete                          Delete a V3 App
+
+   v3-start                           Start an app
+   v3-stop                            Stop an app
+   v3-restart                         Stop all instances of the app, then start them again. This causes downtime.
+   v3-stage                           Create a new droplet for an app
+   v3-restart-app-instance            Terminate, then instantiate an app instance
+   v3-apply-manifest                  Applies manifest properties to an application
+
+   v3-droplets                        List droplets of an app
+   v3-set-droplet                     Set the droplet used to run an app
+
+   v3-env                             Show all env variables for an app
+   v3-set-env                         Set an env variable for an app
+   v3-unset-env                       Remove an env variable from an app
+
+   v3-get-health-check                Show the type of health check performed on an app
+   v3-set-health-check                Change type of health check performed on an app's process
+
+   v3-packages                        List packages of an app
+   v3-create-package                  Uploads a V3 Package
+
+   v3-ssh                             SSH to an application container instance
+Getting buildpacks...
+
+buildpack                                   position   enabled   locked   filename                                                        stack
+hwc_buildpack                               1          true      false    hwc_buildpack-cached-windows-v3.1.6.zip                         windows
+hwc_buildpack                               2          true      false    hwc_buildpack-cached-windows2016-v3.1.6.zip                     windows2016
+hwc_buildpack                               3          true      false    hwc_buildpack-cached-windows2012R2-v3.1.6.zip                   windows2012R2
+dicf_hwc_buildpack_latest                   4          true      false    hwc-buildpack-v2.3.14.zip                                       windows2016
+java_buildpack_offline                      5          true      false    java-buildpack-offline-cflinuxfs2-v4.18.zip                     cflinuxfs2
+dicf_dotnet_core_buildpack_latest           6          true      false    dotnet-core_buildpack-cached-v2.0.5+1521557876.zip              cflinuxfs3
+nodejs_buildpack                            7          true      false    nodejs_buildpack-cached-cflinuxfs3-v1.6.45.zip                  cflinuxfs3
+dicf_ruby_buildpack_latest                  8          true      false    ruby_buildpack-cached-v1.7.15+1520610971.zip                    cflinuxfs3
+dicf_python_buildpack_latest                9          true      false    python_buildpack-cached-v1.6.11+1520607119.zip
+staticfile_buildpack                        10         true      false    staticfile_buildpack-cached-cflinuxfs2-v1.4.40.zip              cflinuxfs2
+go_buildpack                                11         true      false    go_buildpack-cached-cflinuxfs3-v1.8.35.zip                      cflinuxfs3
+binary_buildpack                            12         true      false    binary_buildpack-cached-cflinuxfs2-v1.0.30.zip                  cflinuxfs2
+dicf_php_buildpack_latest                   13         true      false    php_buildpack-cached-v4.3.53+1524880762.zip                     cflinuxfs3
+dicf_go_buildpack_latest                    14         true      false    go_buildpack-cached-v1.8.20+1520610537.zip                      cflinuxfs3
+python_buildpack                            15         true      false    python_buildpack-cached-cflinuxfs2-v1.6.29.zip                  cflinuxfs2
+dicf_binary_buildpack_latest                16         true      false    binary_buildpack-cached-v1.0.18+1521578949.zip                  cflinuxfs3
+ruby_buildpack                              17         true      false    ruby_buildpack-cached-cflinuxfs3-v1.7.34.zip                    cflinuxfs3
+dicf_staticfile_buildpack_latest            18         true      false    staticfile_buildpack-cached-v1.4.24+1520610268.zip              cflinuxfs3
+dicf_nodejs_buildpack_latest                19         true      false    nodejs_buildpack-cached-v1.6.20+1520610159.zip                  cflinuxfs2
+dotnet_core_buildpack                       20         true      false    dotnet-core_buildpack-cached-cflinuxfs2-v2.2.7.zip              cflinuxfs2
+dicf_java_buildpack_offline_latest          21         true      false    java-buildpack-offline-v3.19.2.zip                              cflinuxfs3
+dicf_java_buildpack_4_offline_latest        22         true      false    java-buildpack-offline-v4.9.zip                                 cflinuxfs3
+dicf_java_buildpack_415                     23         true      false    java-buildpack-offline-v4.15.zip                                cflinuxfs3
+php_buildpack                               24         true      false    php_buildpack-cached-cflinuxfs2-v4.3.72.zip                     cflinuxfs2
+dicf_java_buildpack_offline_quondam         25         true      false    java-buildpack-offline-v3.16.zip                                cflinuxfs3
+php_buildpack                               26         true      false    php_buildpack-cached-cflinuxfs3-v4.3.72.zip                     cflinuxfs3
+java_buildpack_offline_quondam              27         true      false    java-buildpack-offline-v3.10.zip                                cflinuxfs3
+dicf_hwc_buildpack_3_1_4                    28         true      false    hwc_buildpack-cached-windows2016-v3.1.4+1547752005.zip          windows2016
+dicf_hwc_buildpack_315_windows2016          29         true      false    hwc_buildpack-cached-windows2016-v3.1.5+1550682324.zip          windows2016
+dicf_nodejs_buildpack_1645_cflinuxfs2       30         true      false    nodejs_buildpack-cached-cflinuxfs2-v1.6.45+1551713302.zip       cflinuxfs2
+dicf_nodejs_buildpack_1645_cflinuxfs3       31         true      false    nodejs_buildpack-cached-cflinuxfs3-v1.6.45+1551713269.zip       cflinuxfs3
+dicf_dotnet_core_buildpack_2_2_4            32         true      false    dotnet-core_buildpack-cached-cflinuxfs2-v2.2.4+1547243670.zip   cflinuxfs2
+dicf_java_buildpack_offline_4161            33         true      false    java-buildpack-offline-v4.16.1.zip                              cflinuxfs3
+dicf_dotnet_core_buildpack_2_2_4            34         true      false    dotnet-core_buildpack-cached-cflinuxfs3-v2.2.4+1547243658.zip   cflinuxfs3
+dicf_dotnet_core_buildpack_227_cflinuxfs3   35         true      false    dotnet-core_buildpack-cached-cflinuxfs3-v2.2.7+1551456071.zip   cflinuxfs3
+python_buildpack                            36         true      false    python_buildpack-cached-cflinuxfs3-v1.6.29.zip                  cflinuxfs3
+dotnet_core_buildpack                       37         true      false    dotnet-core_buildpack-cached-cflinuxfs3-v2.2.7.zip              cflinuxfs3
+dicf_dotnet_core_buildpack_227_cflinuxfs2   38         true      false    dotnet-core_buildpack-cached-cflinuxfs2-v2.2.7+1551456083.zip   cflinuxfs2
+dicf_dotnet_core_buildpack_228_cflinuxfs3   39         true      false    dotnet-core_buildpack-cached-cflinuxfs3-v2.2.8+1553099511.zip   cflinuxfs3
+dicf_python_buildpack_1629_cflinuxfs2       40         true      false    python_buildpack-cached-cflinuxfs2-v1.6.29+1551711721.zip       cflinuxfs2
+dicf_python_buildpack_1629_cflinuxfs3       41         true      false    python_buildpack-cached-cflinuxfs3-v1.6.29+1551711762.zip       cflinuxfs3
+dicf_hwc_buildpack_3_1_4                    42         true      false    hwc_buildpack-cached-windows2012R2-v3.1.4+1547752011.zip        windows2012R2
+staticfile_buildpack                        43         true      false    staticfile_buildpack-cached-cflinuxfs3-v1.4.40.zip              cflinuxfs3
+dicf_php_buildpack_4371_cflinuxfs2          44         true      false    php_buildpack-cached-cflinuxfs2-v4.3.71+1551455634.zip          cflinuxfs2
+go_buildpack                                45         true      false    go_buildpack-cached-cflinuxfs2-v1.8.35.zip                      cflinuxfs2
+dicf_php_buildpack_4371_cflinuxfs3          46         true      false    php_buildpack-cached-cflinuxfs3-v4.3.71+1551455655.zip          cflinuxfs3
+java_buildpack_offline                      47         true      false    java-buildpack-offline-cflinuxfs3-v4.18.zip                     cflinuxfs3
+ruby_buildpack                              48         true      false    ruby_buildpack-cached-cflinuxfs2-v1.7.34.zip                    cflinuxfs2
+binary_buildpack                            49         true      false    binary_buildpack-cached-cflinuxfs3-v1.0.30.zip                  cflinuxfs3
+binary_buildpack                            50         true      false    binary_buildpack-cached-windows2012R2-v1.0.30.zip               windows2012R2
+binary_buildpack                            51         true      false    binary_buildpack-cached-windows2016-v1.0.30.zip                 windows2016
+dicf_go_buildpack_1835_cflinuxfs2           52         true      false    go_buildpack-cached-cflinuxfs2-v1.8.35+1551456132.zip           cflinuxfs2
+dicf_go_buildpack_1835_cflinuxfs3           53         true      false    go_buildpack-cached-cflinuxfs3-v1.8.35+1551456064.zip           cflinuxfs3
+nodejs_buildpack                            54         true      false    nodejs_buildpack-cached-cflinuxfs2-v1.6.45.zip                  cflinuxfs2
+dicf_binary_buildpack_1031_cflinuxfs3       55         true      false    binary_buildpack-cached-cflinuxfs3-v1.0.31+1551455672.zip       cflinuxfs3
+dicf_binary_buildpack_1031_cflinuxfs2       56         true      false    binary_buildpack-cached-cflinuxfs2-v1.0.31+1551455674.zip       cflinuxfs2
+dicf_staticfile_buildpack_1_4_37            57         true      false    staticfile_buildpack-cached-cflinuxfs2-v1.4.37+1546287486.zip   cflinuxfs2
+dicf_staticfile_buildpack_1440_cflinuxfs3   58         true      false    staticfile_buildpack-cached-cflinuxfs3-v1.4.40+1551456296.zip   cflinuxfs3
+dicf_staticfile_buildpack_1440_cflinuxfs2   59         true      false    staticfile_buildpack-cached-cflinuxfs2-v1.4.40+1551456319.zip   cflinuxfs2
+dicf_java_buildpack_4172                    60         true      false    java-buildpack-offline-v4.17.2.zip                              cflinuxfs3
+dicf_java_buildpack_4172                    61         true      false    java-buildpack-offline-v4.17.2.zip                              cflinuxfs2
+dicf_java_buildpack_4_offline_latest        62         true      false    java-buildpack-offline-v4.9.zip                                 cflinuxfs2
+dicf_java_buildpack_offline_latest          63         true      false    java-buildpack-offline-v3.19.2.zip                              cflinuxfs2
+binary_buildpack                            64         true      false    binary_buildpack-cached-windows-v1.0.30.zip                     windows

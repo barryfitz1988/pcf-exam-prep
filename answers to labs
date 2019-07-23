@@ -1,0 +1,3 @@
+Answwer to lab 1
+
+cf push roster -p ./rest-data-service.jar -i 1 -m 750M -b java_buildpack --random-route

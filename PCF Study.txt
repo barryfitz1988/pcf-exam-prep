@@ -1,0 +1,495 @@
+===vi commands=== 
+ctrl + c to end 
+wq = write and quit and save
+i = insert 
+
+
+
+=====================CLOUD FOUNDRY ==================================
+
+cf target - A cf installation (or endpoint) you can interact with
+This endpoint is a standard REST API. The core API is consistent across all CF distriputions
+
+
+====CLI ===
+A local tool that simplifies interactions with Cloud Foundry
+
+The command line interface is a locally installed program that simplifies interaction with a CF instance. The CLI exposes functions (like 
+
+
+====ORG===
+Logically segregates tenants in a Cloud Foundry
+An organization is used to segregate tenants in a CF instance. The separation is purely logical, there is no underlying physical segregation.
+While the use of organizations is required, the method of segregation is arbitrary and left to the end user. Common use cases are for different business units, projects, or even companies (this is common in a hosted CF public cloud). To learn more, visit the 
+
+
+===SPACES===
+Used to carve up an Organization. Applications and service instances are scoped to a space.
+Spaces are used to carve up Organizations. Like Organizations, the method of separation is left to the end user. Common scenarios include denoting different applications, projects, or lifecycle steps (development, testing, production, etc.).
+Spaces are the most finite logical grouping. Applications and service instances are always scoped to a space. To learn more, visit the 
+
+
+
+===QUOTA===
+Resource limits for orgs and spaces
+Quotas provide logical limits to resource consumption in Cloud Foundry. Quotas can be set for orgs and/or spaces. To learn more, visit the&nbsp;
+
+==ROLE==
+Roles grant granular capabilities to a User. Users are assigned to one or more roles in orgs and spaces. Role names are logical and attempt to convey scope (org/space), as well as what capabilities they provide: for example, Org Manager, Space Developer, etc.
+
+==ORG MANAGER==
+ can add Spaces, but cannot deploy apps to Spaces. As a developer, you will need to have the 
+
+==SPACE DEVELOPER==
+role in a space in order to be able to deploy applications. To learn more, visit the 
+
+
+===IAAS===
+ improved on this dramatically. In IaaS, the Virtual Machine is the unit of currency. Vendors would manage physical hardware and networks, providing software-defined interfaces for provisioning and configuration. The process of provisioning VMs was standardized in a self-service model. This drastically reduced errors and provisioning time, introducing "on-demand" models. Amazon and VMWare were the major pioneers.
+
+
+==PAAS==
+  improves upon IaaS, standardizing more primitives for operators and developers. For developers, PaaS allows you to focus on the applications. The entire rest of the stack is either managed for you or exposed through APIs. 
+
+
+===CF CLI ==
+command line interface, is a tool that simplifies interacting with Cloud Foundry. It runs locally to developers' desktops; it is written in the Go language, so it can support Windows, Linux, MacOS, etc. The CLI can talk to any Cloud Foundry instance simply by first targeting an instance, and then authenticating to it (an instance of Cloud Foundry is often referred to as a
+. Many plugins are available from the community to do things like managing logins for different Cloud Foundry instances, or updating running applications with zero downtime. You can also write your own plugins, if desired.
+
+=== CLOUD CONTROLLER ==
+is the component in Cloud Foundry which exposes the REST APIs of Cloud Foundry. It is the endpoint the CLI is talking to when interacting with a Cloud Foundry instance.&nbsp;
+The Cloud Controller "answers the call" from clients, then interacts with other Cloud Foundry components to do things like deploy, run, and manipulate your applications and services. The Cloud Controller is tasked with tracking the "desired state" of the system as requested by users.
+As a developer, one of the first things you will want to do is deploy an application to Cloud Foundry using the CLI. This is known as an application 'push'. You will use the CLI to issue commands to the Cloud Controller to accomplish this. The Cloud Controller will then work with other Cloud Foundry components to fulfill your requests.
+
+
+
+=== DIEGO ===
+is responsible for the lifecycle of applications and tasks. Applications are often referred to as long running processes in Diego terms, processes like a Java-based OLTP application or a Rails web application that should be kept running. Tasks are one-off processes, like a database migration, that are to be run, then terminated. Both long running processes (apps) and tasks are run inside containers.Diego contains one or more compute nodes (virtual machines) called Cells. Cells run containers, which execute our applications and tasks. Cloud Foundry has been running  since its inception. Containers are simply a tool, not a solution. They are an integral part of the implementation of a platform, but do not make a platform by themselves. As an app developer, rest assured that Cloud Foundry will continue to evolve and support the best practices and implementations around containers, while insulating you from the details. After all, you should focus on writing good applications and let the platform handle the rest.
+
+
+
+ === ROUTING === 
+ is responsible for routing traffic into applications and to the cloud controllers. Applications are accessed via routes. As application instances are spun up and down, die and are recreated, fast, automatic updating of route tables is critical. The router provides these services and aims to route traffic to known live and available instances. As an app developer, you want to be able to push your applications and have them available to your users. Your applications might scale up and down. There are situations when instances might crash or Diego Cells might go offline. The router ensures traffic is routed appropriately, given this ever-changing landscape.
+
+
+=== BUILDPACKS  ====
+Often, applications will require runtime dependencies like the JRE, Node, or Ruby binaries, or an application performance monitoring agent to execute. These external dependencies need to be managed centrally, to ensure the integrity of the ecosystem. 
+More specifically, buildpacks are responsible for preparing applications for execution inside containers in Diego. Applications go through a process called staging, whereby they are prepared for fast execution. Runtime dependencies are added, memory allocations are calculated, and start commands are set during this process. The output is called a droplet a combination of the application plus the runtime dependencies that can be executed inside a container with minimal effort.
+
+Buildpacks can either be explicitly declared by the developer, or detected by CF when an application is pushed. Developers can use the -b flag on a push to either reference a system buildpack by name, or specify the URL of a Git repository containing a buildpack. 
+
+If no buildpack is specified, CF will ask each system buildpack if it knows how to handle the app bits. The order in which buildpacks are asked is determined by the system buildpack configuration and can be seen by running cf buildpacks
+
+
+ detect is run to determine whether the buildpack thinks it can support the application 
+ supply adds dependcies to the droplet 
+ finalize prepapares for the app to launch
+ release provides the metadata on how to execute the app
+
+
+ Buildpacks can look at the environment variables bound to the app (e.g. APM agents by service binding, 
+ JBP_CONFIG_* for java-buildpack 
+
+
+===LOGGERATOR===
+ will automatically aggregate your logs for you. All you have to do is simply direct your logs to standard out and standard error Cells will collect logs from all app instances and forward them to the Loggregator. 
+With logs and metrics streaming in from many application instances, we need a consistent and consolidated way to access them. 
+
+
+====UAA===
+We need to ensure our platform and our applications are secure as well. With such a large ecosystem of services and components, fine-grained access control is a must. These services are provided by UAA, or the 
+ OAUTH2 provider. It is used to secure the Cloud Foundry platform and can also be used to secure applications. It can issue tokens for client apps to use when they act on behalf of Cloud Foundry users. UAA has endpoints for managing user accounts and for registering OAuth2 clients, as well as various other management functions.
+
+
+
+====SERVICE BROKERS====
+Applications often need services like databases, caches and/or messaging systems. Service brokers provide access to these services in Cloud Foundry through a standardized interface. This interface allows services to be provisioned and consumed using the Cloud Foundry APIs, without knowledge of the underlying service.As a developer, you can write an application that leverages MySQL (as an example). You do not need to deploy or manage MySQL, or even know how the broker is provisioning the database.Service brokers implement an API and are registered with the Cloud Controller. Developers issue service management commands via the Cloud Foundry CLI, which communicates them to the Cloud Controller, which, in turn, invokes the service APIs and provisions, deprovisions, configures and manages the underlying database, cache, or messaging infrastructure. 
+
+
+==BOSH ==
+Cloud Foundry is optimized for resiliency . It is a platform that can heal itself through BOSH  (the technology that is used to deploy and manage CF instances). Updating running applications with zero downtime is easy when using Cloud Foundry (called blue/green deployment).
+
+
+==== VERTICAL SCALE === 
+increase memory 
+
+==== HORIZONTAL SCALE ===
+increase instaces 
+
+
+=== Metron ===
+Loggregator, in concert with the Metron agents running on cells in Diego, will automatically aggregate your logs for you. The logs collected by the Metron agents are forwarded to the Doppler Servers. . All you have to do is simply direct your logs to standard out and standard error. Loggregator will do the rest. You will also see logs from CF components, like the router, involved when accessing your applications.
+
+
+=== TRAFFIC CONTROLLER === 
+ provides access to logs and metrics.
+
+
+ === FIREHOSE ====
+
+ You might want to see metrics along with the logs, to correlate something like CPU utilization with log messages. This type of insight can be very powerful for planning and debugging issues.  provides this capability. It is the stream of logs and metrics for all apps, containers, cells, and other Cloud Foundry components. 
+
+
+=== SYSLOG DRAIN ==
+Given the volume of logs, Cloud Foundry doesn't keep them around forever. Therefore, Loggregator allows you to stream logs via a syslog drain e.g. Kibana
+
+
+Chapter 7
+
+=== BOSH ====
+ is responsible for creating and managing Cloud Foundry on top of different providers. BOSH uses a cloud provider interface to work with different platforms, allowing Cloud Foundry to be truly multi-cloud. There are cloud provider interfaces for many different IaaS platforms.
+
+1. Failed VMs Are Automatically Recreated
+	The technology which deploys Cloud Foundry, ensures that the virtual machines that make up Cloud Foundry keep running. When BOSH detects that a VM is missing or not responding, it creates a new one to replace the failure. This happens automatically, with no intervention from operators. Keeping the platform running is a core concern of BOSH.
+
+
+2. Failed VMs Are Automatically Restarted
+	In addition to monitoring VMs, BOSH is also monitoring the processes that should be running on each VM. If a process fails, BOSH restarts it automatically.
+
+3. Application Instance Separation
+	In order to improve resiliency, Diego will attempt to deploy instances of the same Cloud Foundry application across different cells. Diego may also deploy instances of an application across multiple IaaS 
+
+4. Failed Application Instances Are Automatically Recreated
+	Diego is constantly comparing the desired state of application instances to the actual state. When it finds discrepancies, it takes action to attempt to correct the issues. Note that this could include scaling down the number of instances in the event Diego detects a number greater than the desired state.	
+
+
+Rolling Updates
+Cloud Foundry is a distributed system running a shared platform. This type of platform is hard to upgrade since no downtime window will suit everyone. As a solution, Cloud Foundry supports online upgrades. For 
+
+
+
+==== SERVICE INSTANCE ====
+A service instance is a tangible instantiation of a service that can be bound to one or more apps. In database terms, this would be a MySQL database which our app would connect to. 
+
+
+==== SERVICE INSTANCE BINDING ====
+A service instance binding represents an explicit relationship between an app and a service instance. Binding is the process of telling CF that your app will use a service instance:
+
+
+==== MANAGED SERVICE  ====
+Managed services in Cloud Foundry enable users to provision service resources on demand. Managed services implement an API (the Service Broker API), standardizing the service provisioning process and management, regardless of the service type.
+
+
+==== MARKETPLACE  ====
+The marketplace is where users can view what services are available to them. 
+ENDPOINT ------>    /v2/catalog
+
+==== cf marketplace or cf m =======
+As developers, we first want to know what is available to us. From here, we can pick a service offering and identify the right plan to use.
+
+==== cf create-service ====
+This will call the broker to provision an instance of the service according to a plan.
+
+
+==== cf bind-service ===
+Here, credentials are passed from the broker to the application via an environment variable.
+
+
+===== cf restart or cf restage ====
+It is necessary to restart (or restage) your application so that it can parse the environment variable containing the credentials provided during the binding above.
+
+ ==== VCAP_SERVICES ==== 
+Under the covers, Cloud Foundry is passing credentials to our applications through an environment variable called  VCAP_SERVICES
+
+
+==== RESTAGE ====
+Buildpacks can change the way applications are deployed and can be influenced by the services bound to the app. Buildpacks are only used in the staging phase, so a cf restage may be need to pick up the changes
+
+==== RESTART ====
+When the droplet won't change because of the existence of the service, a restart of the application will suffice.
+
+
+===== SERVICE INSTANCES ==== 
+/v2/service_instances
+
+===== BINDINGS ==== 
+ /v2/service_instances/:instance_id/service_bindings
+
+
+===== Space Scoped brokers ======
+ Space Scoped brokers are created by Space Developers with plans scoped to the space. A space developer can register a broker with the cloud controller via cf create-service-broker --space-scoped
+
+
+====== User-Provided Service Instances ====
+ UPSIs are created manually and are not visible in the marketplace. UPSIs are an arbitrary set of key-value pairs. The act of binding a user-provided service instance to an application passes these key-value pairs to the app through the
+
+
+
+
+ ==== 12 FACTOR APP ===================================================================================>
+I. Codebase
+One codebase tracked in revision control, many deploys
+---There is always a one-to-one relationship between a codebase and an application. This is critical for a good separation of concerns and for encapsulation, and is a demonstration of the common-closure packaging principle. 
+
+II. Dependencies
+Explicitly declare and isolate dependencies
+----A twelve-factor app never relies on the implicit existence of system-wide packages. A twelve-factor application declares all dependencies, completely and exactly, via a dependency declaration manifest. Examples include bundler for Ruby, Maven/Gradle for Java, and NPM for NodeJS.
+
+III. Config
+Store config in the environment
+---An application's configuration is everything that can vary between deployments.
+
+IV. Backing services
+Treat backing services as attached resources
+----The code for a twelve-factor application makes no distinction between local and third-party services. To the application, both are attached resources, accessed via a URL or other locator/credentials stored in the configuration. A deploy of the 12 factor app should be able to swap out a local MySQL database with one managed by a third party (such as Amazon RDS), without any changes to the app's code.
+
+V. Build, release, run
+Strictly separate build and run stages
+----The twelve-factor app uses strict separation between the build, release, and run stages. It is impossible to make changes to the code at runtime, since there is no way to propagate those changes back to the build stage.
+
+VI. Processes
+Execute the app as one or more stateless processes
+-----The application is executed in the execution environment as one or more processes. Twelve-factor processes are stateless and share-nothing. Any data that needs to persist must be stored in a stateful backing service, typically a database.
+
+
+VII. Port binding
+Export services via port binding
+-----The twelve-factor application is completely self-contained and does not rely on runtime injection of a web server into the execution environment to create a web-facing service. The web application exports HTTP as a service by binding to a port, and listening to requests coming in on that port. 
+
+VIII. Concurrency
+Scale out via the process model
+----In the twelve-factor application, processes are a first-class citizen. As previously stated, each application instance is a stateless process. To add scale, we add processes or application instances. The share-nothing, horizontally partitionable nature of twelve-factor app processes means that adding more concurrency is a simple and reliable operation.
+
+
+IX. Disposability
+Maximize robustness with fast startup and graceful shutdown
+---- The twelve-factor app's processes are disposable, meaning they can be started or stopped at a moment's notice. This facilitates fast elastic scaling, rapid deployment of code or configuration changes, and robustness of production deploys. When Diego detects a failed instance, it can be restarted quickly.
+
+
+X. Dev/prod parity
+Keep development, staging, and production as similar as possible
+----The twelve-factor application is designed for Continuous Deployment by keeping the gap between development and production small. In Cloud Foundry, this can be achieved using Orgs and Spaces: logical separations between environments. For physical separations (i.e. different CF instances), you can use any certified Cloud Foundry, as the interface is the same; any differences are abstracted away by the platform itself.
+
+
+XI. Logs
+Treat logs as event streams
+-----Logs are the stream of aggregated, time-ordered events, collected from the output streams of all running processes and backing services. A twelve-factor app never concerns itself with routing or storage of its output stream. It should not attempt to write or manage logfiles. Instead, each running process writes its event stream, unbuffered, to 
+
+XII. Admin processes
+Run admin/management tasks as one-off processes
+----The process formation is the array of processes that are used to do the app's regular business (such as handling web requests) as it runs. Separately, developers will often wish to do one-off administrative or maintenance tasks for the application
+
+ ======================================================================================================================================================================>
+
+==== GOROUTER =====
+The GoRouter routes traffic coming into Cloud Foundry to the appropriate component, whether it is an operator addressing the Cloud Controller or an application user accessing an app running on a Diego Cell. It is so-called as it is a Golang re-write of the older Router component. Cloud Foundry maintains a "routing table" that maps URLs to containers and makes this available to the cluster of GoRouter instances. 
+
+
+==== HTTP ROUTES ====
+HTTP routes are a concatenation of a hostname, a domain, and (optionally) a context path. Routes exist within a single space. They can be randomized in development environments to avoid route clashes as seen in previous exercises. Random routes should not be used for production applications.
+
+
+==== DOMAINS ====
+Cloud Foundry needs to be told which domains it should consider for routing.
+There is a system domain (often, the API URL minus the api  prefix), and a separate default app domain that is shared across all Orgs and Spaces. This is so that app developers cannot 'steal' the routes of system components.
+
+
+===== BLUE-GREEN DEPLOYMENTS  ====
+----Let's take a closer look at one of these use cases: zero downtime updates to existing applications. We commonly refer to this functionality in Cloud Foundry as a bule/green deployment.
+
+
+---Let's assume that we have a version of our application v1.0 (called "blue") already running and available on the myapp.mydomain.com route. We want to upgrade to v1.1 (called "green"), without impacting our users. We also want to validate v1.1 in production, before directing any users to it. We can use a blue-green deployment to achieve this.
+
+---We first push green with its own route: myapp-green.mydomain.com route. This route can be hidden from our end users, but can be used to validate that green is behaving as we expect.
+
+To stop sending traffic to blue, we simply use the umap-route  command. We can also unmap the green route from green if desired 
+At this point, traffic has been cut over and users should not have experienced any downtime. We are free to delete blue, or we can keep it around, in the event we discover an issue in green, and need to roll back (using the same procedure).  
+
+
+
+======= DIEGO ===== 
+ is a collection of components that Cloud Foundry uses to run application instances. It is responsible for starting applications and tasks, making sure applications stay running, and placing applications across many VMs for resilience.
+
+ Components in the Diego core run and monitor Tasks and long-running-processes (LRPs). Diego's responsibilities also include orchestrating auctions to place new jobs and converging the desired state in the Cloud Controller with the actual state. Diego has support for pluggable backends for different operating systems via the Garden subcomponent.
+
+By default, Diego will check that an application is accepting TCP connections on the port defined in the environment variable $PORT
+
+Each container will be provided with an ephemeral disk, as well as information about the environment it is running in via environment variables. The variables are presented to the app as JSON objects in the application environment called VCAP_APPLICATION & VCAP_SERVICES
+
+
+
+
+ ======= GARDEN ===== 
+ is a platform-agnostic API for handling container creation and management. It has pluggable backends for the Open Container Initiative (OCI) specifications, as well as for Windows. Garden enables Cloud Foundry to run the same applications on various backend OSs without alteration, because Cloud Foundry uses the API.
+
+
+
+==== APPLICATION SEURITY GROUPS (ASGs) ===
+Since Cloud Foundry is a shared compute cluster, managing egress networking could be complex. ASG's  address this problem by allowing developers/operators to define various egress network access rules for containers. 
+ASGs define IP address and port ranges, as well as protocols to whitelist. In order to take effect, these rules must be bound to either the running or staging phases. On Linux Diego Cells, ASGs are implemented via iptables
+
+=== public_networks ====
+Allows access to public networks, and blocks access to private networks and link-local addresses.
+
+=== dns =====
+Allows access to DNS on port 53 for any IP address.
+
+
+==== STAGING ==== 
+During the staging process, the buildpack combines the application code with any framework and/or runtime dependencies to produce a droplet. Examples of dependencies include: the Java runtime environment, Ruby, etc.
+
+====STACKS====
+ provide the root filesystem (rootFS) ) when launching a droplet in a container. Cloud Foundry supports multiple root filesystems through the use of stacks. Stacks provide a pre-built root filesystem for the container, with OS directories like /usr and /bin The default Linux stack cflinuxfs2 
+
+
+====MONOLITH===
+ The perception is that monoliths are easy. You can just keep lumping on new functionalities without too much thought. A monolith is akin to a massive moving truck - you don't have to plan too much, just keep throwing things in.
+
+Scaling: : Fast moving organizations need to scale user bases, but also scale development teams easily.
+Release Cycles: In order to get feedback quickly and respond to changes, release cycles must be minimized.
+
+
+====MICROSERVICE===
+
+
+
+
+==== LOOSE COUPLING ===
+Loosely coupled architectures are such that individual services (components) have minimal dependencies on other services. Services also have minimal knowledge of the details of other services. This simplifies the models of each service: a service needs only concern itself with its own details.
+
+
+=== BOUNDED CONTEXT ===
+Bounded contexts implement the principles of well-defined interfaces and encapsulation. Encapsulation ensures implementation details and models are not exposed. Well-defined interfaces ensure encapsulated internal details do not have to be shared, nor understood to interact with another service.
+
+
+==== ROUTE SERVICES ====
+Route services process requests independently of the application(s) they front. They are fully decoupled from the applications, making them very reusable. They are ideal for encapsulating a set of functionalities and applying across a broad range of applications.
+
+
+==== DOCKER ====
+For Docker-based apps, staging is a very different process to buildpacks. When deploying a Docker-based application, staging involves accessing the image at the supplied address and extracting/storing its metadata. The image is not stored locally to Cloud Foundry (i.e., in the Blobstore, as happens for buildpack-based apps). The step for creating a long-running process from the image, which can happen immediately or later, relies on the image still existing in the Docker registry that was specified when the application was pushed.
+
+
+Buildpack-based applications are run via a trusted rootFS, while Docker applications are not. Docker applications do not use stacks (i.e., they replace the default Linux stack in the running container).
+Docker Applications can fully specify the contents of their rootFS. To mitigate security concerns, it is recommended that only trusted Docker containers are run on the platform.
+
+
+Buildpack-based applications pick up rootFS patches on restart, while Docker-based ones must rely on patches provided from outside Cloud Foundry.
+
+
+
+==== HTTP ====
+HTTP and HTTPS are the standard web protocols. They have been supported in Cloud Foundry from the start.
+HTTP(S) is a stateless, request/response protocol. HTTP runs on port 80 (if enabled) in Cloud Foundry and HTTPS runs on port 443. HTTP(S) is built on top of TCP.
+
+
+=== TCP ====
+ is a lower-level protocol (as stated previously, HTTP is built on top of TCP). Unlike HTTP(S), TCP is streamed rather than request/response. Because of this, a port can support a single connection at a time. This has important implications, which we discuss later on.
+
+ Because TCP is streamed (not request/response), ports must be reserved. In Cloud Foundry, TCP routes are bound to a port on a component called a "Router Group". The router group can forward traffic to one or more instances.
+
+ A TCP route reserves an external/frontend port on a given TCP router group for an application. Any traffic coming in on that port will be forwarded to one or more instances of the application.
+
+ When developers want to enable TCP routing for their application (assuming the feature has been enabled on the platform), they first have to create a TCP route for their application based on the TCP domain. The developers can then map this route to one or more applications.
+
+ The load balancer listens on the port and forwards requests for the domain to the TCP routers.
+
+ The TCP router listens on the port reserved when the route was created. The TCP router is protocol-agnostic, so it recognizes TCP connections, rather than individual requests.
+
+ Because containers each have their own private network, the TCP router does not have direct access to application containers. When a container is created for an application instance, a port on the Cell VM is randomly chosen and iptables are configured to forward requests for this port to the internal interface on the container.
+
+ The Diego Cell only routes requests to port 8080 (which is known as the Application Port) on the container internal interface. The Application Port is the port on which applications must listen.
+
+
+ ==== User Account & Authentication ===
+  (UAA) is a multi-tenant identity management service. It is a component of Cloud Foundry, but can also be deployed as a stand-alone application. 
+
+  The primary role of the UAA is as an OAuth2 provider, issuing tokens for client applications to use on behalf of Cloud Foundry users. It can also authenticate users with their Cloud Foundry credentials.   
+
+=== OAuth2 ===
+  OAuth2 is the industry-standard protocol for authorization. It works over HTTP to authorize devices, APIs, servers, and applications with access tokens, rather than credentials. It gives you a way to ensure that a specific user/actor has permissions to do something, but it is not responsible for validating a user's identity (Authentication). However, it is typical for the Authorization server to Authenticate as well. 
+
+  OAuth2 has four modes (grant types): authorization code, password, client credentials, and implicit. 
+
+  === TOKENS ==
+
+  Tokens are random strings which are generated by the authorization server (the UAA in our case). OAuth2 access tokens are opaque to clients, but can be decoded by resource servers to obtain all needed information such as userID, scope(s), lifetime, and user attributes.
+
+2 types of tokens 
+Access & refresh
+
+
+==== CASCADING FAILURE ===
+Insulating from failure
+	Prevent a failure from causing another failure.
+
+Recovering from failure
+	As the failures are restored, don't crush them while recovering.
+
+=== CIRCUT BREAKER PATTERN ===
+The Circuit Breaker pattern solves the problem we just illustrated. It is modeled after a circuit breaker in an electrical system, except with the ability to manage the flow through the circuit (throttling).
+
+
+=== DISTRIBUTED TRACING === 
+It allows you to trace requests and responses across distributed systems, even complex systems like amazon.com, with many services and interactions
+
+=== SPAN ====
+A span is a basic unit of work in distributed tracing systems. Spans contain unique IDs, timing information, and other meta information like annotations, logs, etc. Examples of spans include a call to a single microservice or to a backing database.
+
+=== TRACE === 
+ is a set of spans. A trace often represents a logical request. Traces can be used to encapsulate user actions or internal requests that span multiple services.
+
+
+ ===== cf logs ====
+
+ Distributed tracing is built-in, but optional in Cloud Foundry. When enabled, the router will work with trace and span headers (the actual names are X-B3-TraceId and X-B3-SpanId
+
+ If the headers don't exist, the router will generate new values for them and add them to the request.
+ If the span and trace headers exist, it will maintain the trace header. The router will generate a new span ID and set the X-B3-SpanId header to this value. The existing span ID is set as the parent via a header named X-B3-ParentSpan
+
+
+ ==== Iterative App Development ===
+  makes the deployment of an application easy. However, in real development scenarios, with teams working iteratively, there are multiple environments containing different versions of the same application. For example, common environments include development, staging, and production. Sometimes, there are also a number of ongoing projects (each with its own environments).
+
+  Application manifests can be used to encapsulate differences between environments (for example, a reduced logging level in a production space). Manifests can inherit properties from another manifest - so, common settings can be in a base manifest, and environment-specific manifests can inherit these settings and go on to provide values that differ by environment. When the application is pushed, the manifest for the correct environment is used. The application code does not need to be modified and testers can be confident that the application which was tested in one environment is the same when it gets to the next.
+
+
+Once developers decide to push the application to Cloud Foundry, they will target the development space, then push the application using the development manifest. When appropriate, the staging space is targeted and then the application is pushed there using the staging manifest. Once the decision to release to live is made, the production space is targeted and the application is pushed using the production manifest.
+
+
+==== CONTRACTS ====
+we can make adherence to this contract more manageable. As discussed earlier, this is one of the key drivers for the microservices architectural approach: each microservice offers a well-defined public interface.
+
+Contracts can be expressed as code assets, such that they can then be tested against statically for fast feedback. The Spring Cloud Contracts project is one such way of defining a service interface and publishing it as a code artifact that clients can depend on.
+
+
+==== NON BREAKING CHANGES ====
+"Big Bang" changes avoided this problem altogether - in a scheduled downtime window, all applications would be stopped, updated, and then brought back online in lockstep. Many organizations have not had to worry about how to upgrade individual components whilst keeping the system at large online, and so they are surprised when they are exposed to this concern when adopting microservices.
+
+ concurrent versions of applications, and sooner or later, these will behave differently. We cannot have the benefits of continuous uptime unless we embrace and tame this challenge.
+
+ 2 Approaches
+
+ Additive Changes
+	Only ever make additive changes, and be sure that clients can ignore things they aren't expecting. One could  just add endpoints, arguments and fields, and never take them away, or change them, but this will lead to code bloat.
+	This approach also does not allow for fields and behavior to be removed from an application 
+
+Version Mediation
+	Provide some mechanism for a client's messages to get to the right version of the application it's talking to.
+	We can decide upon some scheme by which the desired version data can be determined. A common pattern is to wrap the message in an 'envelope' of sorts: wrapping an opaque payload in a structure that the routing mechanism can understand. Examples for a RESTful application include:
+
+Implementation 
+
+One application supporting many contracts
+One codebase is capable of handling many versions of a contract. One application may have multiple code paths to deal with different versions of the contract, perhaps switching on the presence of a value.
+
+Client-aware routing
+The client explicitly knows which version of an application it wants to talk to, and knows how to send it to the right place.
+
+Opaque routing
+The client explicitly knows which version of an application it wants to talk to, but relies on some intermediate infrastructure to get the message to the right place.
+
+
+
+
+==== SEMANTIC VERSIONING ==== 
+Allows authors to indicate to clients what kind of changes to expect in a new version of code.
+
+An increment to the patch  segment of a version indicates a minor bug fix that does not change the external interface of the system. Clients should not need to make any changes when depending on a new patch revision.
+
+
+An increment to the minor  segment of a version indicates that new features have been added in a non-breaking way. Perhaps additional endpoints are available, or new fields added to an existing endpoint. Client should be safe to depend on a new minor revision without making any code changes; however, they won't be able to exploit any new features.
+
+An increment to the major  segment of a version indicates that a breaking change has been made, and that code changes in the client are required. Major revisions should not be adopted automatically.
+
+
