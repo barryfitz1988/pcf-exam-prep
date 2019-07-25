@@ -1,0 +1,55 @@
+Answer to lab 1
+
+cf push roster -p ./rest-data-service.jar -i 1 -m 750M -b java_buildpack --random-route
+
+curl -H "Content-Type: application/json" -X POST -d '{"firstName":"foo",
+"lastName": "bar"}' https://roster-zany-squirrel.cfapps.io/people
+
+
+https://docs.cloudfoundry.org/buildpacks/java/getting-started-deploying-apps/gsg-ratpack.html
+
+
+ curl -H "Content-Type: application/json" -X POST -d '{"firstname": "baz" , "lastname": "fitz"}'  http://roster-zany-squirrel.cfapps.io/people
+
+
+
+Catalog mgmt - describe plans offered by the service 
+provision - create a serivce instance 
+deprovision - delete a SI 
+
+bind - between app & service
+Provide unique credentials per binding
+
+to view credentials are in v_cap services
+
+
+Cf service-access
+# if it says none that is because we are using the --space-scoped broker
+
+
+v2/service_instance/serivce
+
+
+set env variable to get access to serivce provider 
+
+unbind 
+
+
+
+Where does a service broker have to be depoyed 
+A: Anywhere that has a http: call eiter outside cf or inside cf
+
+Why provide unique credentials per binding 
+A; So it doesn't affect other applications wehen unbound
+
+Service brokers can offer upgrades not downgrades
+
+the broker execpets aa response from the cloud controller in how many seconds
+A 60 
+
+Does privisioning have to be done synchronisly 
+A: No 
+
+
+Do all services have to be bindable 
+A; No
